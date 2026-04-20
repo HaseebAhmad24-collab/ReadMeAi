@@ -1,0 +1,111 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+}
+
+:root {
+  /* Core */
+  --background: #FFFFFF;
+  --foreground: #0D0D0D;
+  
+  /* Brand */
+  --accent: #2D6EF5;
+  --accent-foreground: #FFFFFF;
+  --accent-light: #EEF3FF;
+  
+  /* UI Elements */
+  --card: #FFFFFF;
+  --card-foreground: #0D0D0D;
+  --popover: #FFFFFF;
+  --popover-foreground: #0D0D0D;
+  
+  --primary: #2D6EF5;
+  --primary-foreground: #FFFFFF;
+  
+  --secondary: #F8F9FB;
+  --secondary-foreground: #6B7280;
+  
+  --muted: #F3F4F6;
+  --muted-foreground: #6B7280;
+  
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  
+  --border: #E5E7EB;
+  --border-strong: #D1D5DB;
+  --input: #D1D5DB;
+  --ring: rgba(45, 110, 245, 0.12);
+  
+  /* Status */
+  --success: #16A34A;
+  --success-light: #DCFCE7;
+  --warning: #D97706;
+  --warning-light: #FEF3C7;
+  --error: #DC2626;
+  --error-light: #FEE2E2;
+
+  --radius: 12px;
+}
+
+/* No dark mode for MVP as per instructions */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-foreground font-semibold tracking-tight;
+  }
+  
+  p {
+    @apply text-secondary-foreground leading-relaxed;
+  }
+
+  code, pre {
+    @apply font-mono bg-muted p-1 rounded-sm;
+  }
+}
+
+@layer utilities {
+  .dot-grid {
+    background-image: radial-gradient(circle, #0000000a 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
