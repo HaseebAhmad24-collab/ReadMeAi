@@ -6,8 +6,9 @@ import {
   Trash2, LogOut, Zap, Clock 
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -110,11 +111,9 @@ export default function SettingsPage() {
                 </div>
                 
                 <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button variant="destructive" className="bg-error hover:bg-error/90 shrink-0 font-bold px-6">
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Delete Account
-                        </Button>
+                    <AlertDialogTrigger className={cn(buttonVariants({ variant: "destructive" }), "bg-error hover:bg-error/90 shrink-0 font-bold px-6 cursor-pointer")}>
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete Account
                     </AlertDialogTrigger>
                     <AlertDialogContent className="rounded-2xl border-border">
                         <AlertDialogHeader>

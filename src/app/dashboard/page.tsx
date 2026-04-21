@@ -10,8 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { RepoCard, RepoCardSkeleton } from "@/components/dashboard/RepoCard";
+import { cn } from "@/lib/utils";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -79,11 +80,9 @@ export default function DashboardPage() {
           />
         </div>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-11 gap-2 border-border-strong px-4">
-              <Filter className="w-4 h-4" strokeWidth={1.5} />
-              {filterLang || "All Languages"}
-            </Button>
+          <DropdownMenuTrigger className={cn(buttonVariants({ variant: "outline" }), "flex items-center cursor-pointer h-11 gap-2 border-border-strong px-4")}>
+            <Filter className="w-4 h-4" strokeWidth={1.5} />
+            {filterLang || "All Languages"}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuItem onClick={() => setFilterLang(null)}>All Languages</DropdownMenuItem>

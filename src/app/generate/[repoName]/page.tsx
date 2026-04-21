@@ -144,7 +144,7 @@ export default function GeneratePage() {
               {step === "preview" ? <CheckCircle2 className="w-4 h-4 text-success" /> : step === "generating" ? <Loader2 className="w-4 h-4 text-accent animate-spin" /> : <Circle className="w-4 h-4 text-border" />}
             </div>
             <div className="space-y-4">
-              <p className="text-sm text-secondary-foreground">Crafting your README using Claude 3.5 Sonnet...</p>
+              <p className="text-sm text-secondary-foreground">Crafting your README using Gemini AI...</p>
               <Progress value={progress} className="h-1.5 bg-border" />
               <div className="flex justify-between text-[11px] font-mono text-secondary-foreground">
                 <span>{progress}% COMPLETE</span>

@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getSupabaseService } from "@/lib/supabase";
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function POST(req: Request) {
   const session = (await getServerSession(authOptions)) as any;
@@ -21,7 +19,7 @@ export async function POST(req: Request) {
   // 1. Check Usage Limit
   const { data: usage, error: usageError } = await supabase
     .from("usage_tracking")
-    .select("count")
+    .select("count, id")
     .eq("user_id", userId)
     .eq("month_year", monthYear)
     .single();
@@ -39,7 +37,7 @@ export async function POST(req: Request) {
     const { metadata, fileTree, fileContents } = scanData;
 
     const prompt = `
-      You are an expert technical writer and senior software engineer. 
+      You are an expert technical writer and senior software engineer specializing in documentation.
       Your goal is to generate a professional, high-quality README.md for the following repository.
       
       REPOSITORY METADATA:
@@ -49,7 +47,7 @@ export async function POST(req: Request) {
       Topics: ${metadata.topics?.join(", ")}
       URL: ${metadata.url}
       
-      FILE STRUCTURE (Partial):
+      FILE STRUCTURE:
       ${fileTree.join("\n")}
       
       KEY FILE CONTENTS:
@@ -63,30 +61,27 @@ export async function POST(req: Request) {
          - Project Title & Catchy Description
          - Tech Stack (use standard shield badges)
          - Features (bullet points)
-         - Installation Guide (based on project type, e.g., npm install, pip install)
+         - Installation Guide (based on project type)
          - Usage Examples
          - Environment Variables (if .env.example found)
          - Contributing & License
       3. Use a tone that is confident and helpful.
-      4. Do not include placeholders like "[Your Name]" - use context or general terms.
-      5. Only output the Markdown content itself.
+      4. Only output the Markdown content itself. Do not include any intro or outro text.
     `;
 
-    const response = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20240620",
-      max_tokens: 4000,
-      system: "You are an expert developer specializing in documentation. Generate ONLY the README.md content.",
-      messages: [{ role: "user", content: prompt }],
-    });
+    // Use Gemini Flash Latest (Verified working with available quota)
+    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
-    const content = response.content[0].type === "text" ? response.content[0].text : "";
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const content = response.text();
 
     // 2. Increment Usage Count
     if (usage) {
       await supabase
         .from("usage_tracking")
         .update({ count: usage.count + 1 })
-        .eq("id", (usage as any).id);
+        .eq("id", usage.id);
     } else {
       await supabase.from("usage_tracking").insert({
         user_id: userId,
@@ -94,6 +89,14 @@ export async function POST(req: Request) {
         count: 1,
       });
     }
+
+    // 3. Save generation to history
+    await supabase.from("generations").insert({
+      user_id: userId,
+      repo_name: metadata.name,
+      repo_url: metadata.url,
+      readme_content: content,
+    });
 
     return NextResponse.json({ readme: content });
   } catch (error) {
