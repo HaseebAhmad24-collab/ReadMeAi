@@ -16,6 +16,7 @@ interface RepoCardProps {
     updated_at: string | null;
     private: boolean;
     html_url: string;
+    has_readme?: boolean;
     status?: "no-readme" | "has-readme" | "generated";
   };
 }
@@ -57,9 +58,17 @@ export function RepoCard({ repo }: RepoCardProps) {
             <span className="text-[12px] text-text-disabled">Updated {lastUpdated}</span>
           </div>
 
-          {/* Status Badge Mockup (We'll integrate real status later) */}
-          <Badge variant="outline" className="rounded-full px-2 py-0 text-[10px] uppercase tracking-wider font-bold border-border/50 text-secondary-foreground">
-            No README
+          {/* Status Badge */}
+          <Badge 
+            variant="outline" 
+            className={cn(
+              "rounded-full px-2 py-0 text-[10px] uppercase tracking-wider font-bold",
+              repo.has_readme 
+                ? "bg-accent/10 border-accent/20 text-accent" 
+                : "border-border/50 text-secondary-foreground"
+            )}
+          >
+            {repo.has_readme ? "Ready" : "No README"}
           </Badge>
         </div>
 

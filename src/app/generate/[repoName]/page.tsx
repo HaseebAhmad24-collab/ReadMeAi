@@ -90,7 +90,8 @@ export default function GeneratePage() {
       });
       const data = await res.json();
       if (data.success) {
-        router.push("/success");
+        const repoUrl = scanData?.metadata?.url || "";
+        router.push(`/success?url=${encodeURIComponent(repoUrl)}`);
       }
     } catch (error) {
       console.error("Push failed:", error);
@@ -228,7 +229,7 @@ export default function GeneratePage() {
 
         {/* Floating Success Indicator */}
         {step === "preview" && (
-          <div className="absolute bottom-10 right-10 bg-success text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg animate-bounce flex items-center gap-2">
+          <div className="absolute bottom-10 right-10 bg-accent text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg animate-bounce flex items-center gap-2">
             <CheckCircle2 className="w-3.5 h-3.5" />
             READY TO PUSH
           </div>
