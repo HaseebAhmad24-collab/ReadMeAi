@@ -55,27 +55,42 @@ export const authOptions: NextAuthOptions = {
       if (profile) {
         token.username = (profile as any).login;
       }
-      if (user) {
-        // Add Supabase user ID to token
-        const supabase = getSupabaseService();
-        const { data } = await supabase
-          .from("users")
-          .select("id, role")
-          .eq("github_id", token.sub)
-          .single();
-        
-        if (data) {
-          token.userId = data.id;
-          token.role = data.role;
+      
+      // Whenever user signs in, sync the role/id
+      if (account && user) {
+        try {
+          const supabase = getSupabaseService();
+          const { data, error } = await supabase
+            .from("users")
+            .select("id, role")
+            .eq("github_id", account.providerAccountId)
+            .single();
+          
+          if (!error && data) {
+            token.userId = data.id;
+            token.role = data.role;
+          }
+        } catch (e) {
+          console.error("JWT Session Supabase error:", e);
         }
       }
+
+      // Self-healing: if token somehow lost role but has userId
+      if (token.userId && !token.role) {
+        try {
+          const supabase = getSupabaseService();
+          const { data } = await supabase.from("users").select("role").eq("id", token.userId).single();
+          if (data) token.role = data.role;
+        } catch (e) {}
+      }
+
       return token;
     },
     async session({ session, token }: any) {
       session.accessToken = token.accessToken;
       session.user.id = token.userId;
       session.user.username = token.username;
-      session.user.role = token.role;
+      session.user.role = token.role || "user"; // ensure fallback
       return session;
     },
   },
