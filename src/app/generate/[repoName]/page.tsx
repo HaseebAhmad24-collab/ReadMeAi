@@ -26,6 +26,7 @@ export default function GeneratePage() {
   const [progress, setProgress] = useState(0);
   const [scanPhase, setScanPhase] = useState(0);
   const [scanningFiles, setScanningFiles] = useState<string[]>([]);
+  const [hasError, setHasError] = useState(false);
   
   // SCANNING LOGIC
   useEffect(() => {
@@ -72,16 +73,23 @@ export default function GeneratePage() {
           const data = await res.json();
           
           if (!res.ok) {
-            throw new Error(data.error || "Generation failed");
+            const errorMsg = data.error || "Generation failed";
+            console.error("Generation failed:", errorMsg);
+            toast.error(errorMsg);
+            setHasError(true);
+            setStep("preview"); // Let them out of the generating state
+            setReadme("### ❌ Generation Failed\n\n" + errorMsg);
+            return;
           }
           
           setReadme(data.readme);
           setProgress(100);
           setTimeout(() => setStep("preview"), 500);
         } catch (error: any) {
-          console.error("Generation failed:", error);
+          console.error("Network or parsing error:", error);
           toast.error(error.message || "Failed to generate README");
-          setStep("preview"); // Let them out of the generating state
+          setHasError(true);
+          setStep("preview"); 
           setReadme("### ❌ Generation Failed\n\n" + (error.message || "Unknown error occurred."));
         }
       }
@@ -198,8 +206,8 @@ export default function GeneratePage() {
                   <Button 
                     variant="default" 
                     size="sm" 
-                    className="h-9 bg-accent hover:bg-accent-hover text-white gap-2 px-5 font-bold text-xs rounded-lg shadow-md transition-all active:scale-95"
-                    disabled={step === "pushing"}
+                    className="h-9 bg-accent hover:bg-accent-hover text-white gap-2 px-5 font-bold text-xs rounded-lg shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={step === "pushing" || hasError}
                     onClick={handlePush}
                   >
                     {step === "pushing" ? (
@@ -207,7 +215,7 @@ export default function GeneratePage() {
                     ) : (
                       <Rocket className="w-3.5 h-3.5" />
                     )}
-                    Push to GitHub
+                    {hasError ? "Limit Reached" : "Push to GitHub"}
                   </Button>
                 </div>
               </div>
@@ -237,7 +245,7 @@ export default function GeneratePage() {
         )}
 
         {/* Floating Success Indicator */}
-        {step === "preview" && (
+        {step === "preview" && !hasError && (
           <div className="absolute bottom-10 right-10 bg-accent text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg animate-bounce flex items-center gap-2">
             <CheckCircle2 className="w-3.5 h-3.5" />
             READY TO PUSH
