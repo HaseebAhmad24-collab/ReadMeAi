@@ -49,7 +49,7 @@ export default function GeneratePage() {
 
         setStep("generating");
       } catch (error) {
-        console.error("Scan failed:", error);
+        console.warn("Scan failed:", error);
       }
     }
     startScan();
@@ -74,7 +74,7 @@ export default function GeneratePage() {
           
           if (!res.ok) {
             const errorMsg = data.error || "Generation failed";
-            console.error("Generation failed:", errorMsg);
+            console.warn("Generation failed:", errorMsg); // Next.js intercepts console.error, so use warn
             toast.error(errorMsg);
             setHasError(true);
             setStep("preview"); // Let them out of the generating state
@@ -86,7 +86,7 @@ export default function GeneratePage() {
           setProgress(100);
           setTimeout(() => setStep("preview"), 500);
         } catch (error: any) {
-          console.error("Network or parsing error:", error);
+          console.warn("Network or parsing error:", error);
           toast.error(error.message || "Failed to generate README");
           setHasError(true);
           setStep("preview"); 
@@ -111,7 +111,7 @@ export default function GeneratePage() {
         router.push(`/success?url=${encodeURIComponent(repoUrl)}`);
       }
     } catch (error) {
-      console.error("Push failed:", error);
+      console.warn("Push failed:", error);
       setStep("preview");
     }
   };
