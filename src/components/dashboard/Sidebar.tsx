@@ -15,7 +15,9 @@ const navItems = [
 
 export function Sidebar({ userPlan = "free", usageCount = 0 }: { userPlan?: string; usageCount?: number }) {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session } = useSession() as any;
+  const isAdmin = session?.user?.role === "admin";
+  const plan = isAdmin ? "admin" : userPlan;
 
   return (
     <aside className="w-[240px] fixed top-0 left-0 bottom-0 bg-white border-r border-border flex flex-col z-40 hidden lg:flex">
