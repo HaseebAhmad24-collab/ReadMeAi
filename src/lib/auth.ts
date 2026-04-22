@@ -60,12 +60,13 @@ export const authOptions: NextAuthOptions = {
         const supabase = getSupabaseService();
         const { data } = await supabase
           .from("users")
-          .select("id")
+          .select("id, role")
           .eq("github_id", token.sub)
           .single();
         
         if (data) {
           token.userId = data.id;
+          token.role = data.role;
         }
       }
       return token;
@@ -74,6 +75,7 @@ export const authOptions: NextAuthOptions = {
       session.accessToken = token.accessToken;
       session.user.id = token.userId;
       session.user.username = token.username;
+      session.user.role = token.role;
       return session;
     },
   },

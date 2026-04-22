@@ -24,7 +24,9 @@ export async function POST(req: Request) {
     .eq("month_year", monthYear)
     .single();
 
-  if (usage && usage.count >= 3) {
+  const isAdmin = session.user.role === "admin";
+
+  if (!isAdmin && usage && usage.count >= 3) {
     return NextResponse.json({ error: "Monthly limit reached. Please upgrade to Pro." }, { status: 403 });
   }
 
