@@ -37,7 +37,15 @@ ReadMeAI is a professional SaaS platform designed to automate GitHub README gene
 - Handles branch detection and file creation.
 
 ### 5. Settings & Profile
-- User information display, usage tracking (3 free generations/month), and account deletion.
+- User information and GitHub link display.
+- **Dynamic Usage Tracking**: Server-rendered limit status pulling from Supabase `usage_tracking` table. Displays dynamic reset dates based on the next calendar month.
+- **Account Deletion**: Full teardown API (`/api/user/delete`) that deletes user history, usage tracking, NextAuth tokens, and the user's Supabase record, returning them to a clean state.
+
+### 6. Role-Based Access Control (RBAC) & Limits
+- Standard Users are restricted to 3 README generations per month.
+- `admin` users bypass usage limits entirely and have specific UI states.
+- Implemented **Self-Healing Auth Sessions**: Since NextAuth JWTs can become stale, the system queries the Supabase `users` table during the `jwt` callback to ensure the `role` is perfectly synced.
+- **Error Handling**: Custom Toast UI (`sonner`) implemented for limit exhaustion. Bypassed Next.js 16 Development overlays by switching `console.error` to `console.warn` for handled application exceptions.
 
 ---
 
