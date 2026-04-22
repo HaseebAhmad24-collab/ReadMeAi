@@ -6,9 +6,9 @@ import { getSupabaseService } from "@/lib/supabase";
 
 async function getUsageCount(userId: string) {
   const supabase = getSupabaseService();
-  const monthYear = new Date().toLocaleString("en-US", { month: "long", year: "numeric" });
+  const monthYear = new Date().toLocaleString("en-US", { month: "2-digit", year: "numeric" }).replace("/", "-");
   const { data } = await supabase
-    .from("generations")
+    .from("usage_tracking")
     .select("count")
     .eq("user_id", userId)
     .eq("month_year", monthYear)
