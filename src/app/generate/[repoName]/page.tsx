@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import ReactMarkdown from "react-markdown";
 import { Typewriter } from "@/components/generate/Typewriter";
 import Link from "next/link";
+import { toast } from "sonner";
 
 type Step = "scanning" | "generating" | "preview" | "pushing";
 
@@ -69,11 +70,19 @@ export default function GeneratePage() {
             body: JSON.stringify({ scanData }),
           });
           const data = await res.json();
+          
+          if (!res.ok) {
+            throw new Error(data.error || "Generation failed");
+          }
+          
           setReadme(data.readme);
           setProgress(100);
           setTimeout(() => setStep("preview"), 500);
-        } catch (error) {
+        } catch (error: any) {
           console.error("Generation failed:", error);
+          toast.error(error.message || "Failed to generate README");
+          setStep("preview"); // Let them out of the generating state
+          setReadme("### ❌ Generation Failed\n\n" + (error.message || "Unknown error occurred."));
         }
       }
       generate();

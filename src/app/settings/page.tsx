@@ -40,6 +40,11 @@ export default async function SettingsPage() {
   const isAdmin = session?.user?.role === "admin";
   const plan = isAdmin ? "admin" : "free";
 
+  const nextMonth = new Date();
+  nextMonth.setMonth(nextMonth.getMonth() + 1);
+  nextMonth.setDate(1);
+  const resetDateStr = nextMonth.toLocaleString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
   return (
     <div className="flex-1 p-8 max-w-4xl">
       <div className="mb-10">
@@ -113,7 +118,7 @@ export default async function SettingsPage() {
                 <Progress value={isAdmin ? 100 : (usageCount/3)*100} className="h-2 bg-border overflow-hidden [&>div]:bg-accent" />
                 <p className="text-[12px] text-secondary-foreground flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
-                    Limits will reset on May 1st, 2024.
+                    Limits will reset on {resetDateStr}.
                 </p>
             </div>
           </div>
