@@ -6,6 +6,7 @@ import { Terminal, LayoutDashboard, History, Settings, LogOut, Zap } from "lucid
 import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
 
 const navItems = [
   { name: "My Repos", href: "/dashboard", icon: LayoutDashboard },
@@ -55,7 +56,7 @@ export function Sidebar({ userPlan = "free", usageCount = 0 }: { userPlan?: stri
       </nav>
 
       {/* Usage Pill (Simplified for now) */}
-      <div className="px-6 py-4">
+      <div className="px-6 py-4 flex flex-col gap-3">
         <div className="p-4 rounded-xl bg-secondary border border-border">
           <div className="flex items-center gap-2 mb-2">
             <Zap className="w-3.5 h-3.5 text-accent" />
@@ -74,6 +75,19 @@ export function Sidebar({ userPlan = "free", usageCount = 0 }: { userPlan?: stri
             />
           </div>
         </div>
+        
+        {/* Upgrade to Pro Button */}
+        {!isAdmin && (
+          <button 
+            onClick={() => toast("Pro features are currently in testing! 🚀", {
+              description: "We'll let you know as soon as the upgraded plans are available."
+            })}
+            className="w-full py-2.5 px-4 bg-gradient-to-r from-accent to-accent-hover text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm hover:shadow-md transition-all active:scale-95"
+          >
+            <Zap className="w-3.5 h-3.5 fill-white" />
+            Upgrade to Pro
+          </button>
+        )}
       </div>
 
       {/* User Area */}
