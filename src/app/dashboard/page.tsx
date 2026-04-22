@@ -54,17 +54,24 @@ export default function DashboardPage() {
       {/* Top Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">
-            Welcome back, @{session?.user?.name?.split(" ")[0].toLowerCase()} 👋
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">
+              Welcome back, @{session?.user?.name?.split(" ")[0].toLowerCase()} 👋
+            </h1>
+            {session?.user?.role === "admin" && (
+              <span className="px-2 py-0.5 rounded-md bg-accent/10 border border-accent/20 text-accent text-[10px] font-bold uppercase tracking-wider">
+                Admin
+              </span>
+            )}
+          </div>
           <p className="text-secondary-foreground text-sm">
             Select a repository to generate or improve your README.
           </p>
         </div>
         
-        {/* Mobile-only usage pill would go here, Sidebar handles desktop */}
+        {/* Mobile-only usage pill */}
         <div className="lg:hidden px-3 py-1.5 rounded-full bg-accent-light text-accent text-[11px] font-bold uppercase border border-accent/10">
-          2 / 3 Generations Used
+          {session?.user?.role === "admin" ? "Admin Access" : "2 / 3 Generations Used"}
         </div>
       </div>
 

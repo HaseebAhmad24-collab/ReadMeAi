@@ -60,13 +60,15 @@ export function Sidebar({ userPlan = "free", usageCount = 0 }: { userPlan?: stri
             <span className="text-xs font-semibold text-foreground uppercase tracking-wider">Usage</span>
           </div>
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[11px] text-secondary-foreground font-medium">{usageCount} / 3 used</span>
-            <span className="text-[10px] font-bold text-accent uppercase">{userPlan}</span>
+            <span className="text-[11px] text-secondary-foreground font-medium">
+              {isAdmin ? "Unlimited access" : `${usageCount} / 3 used`}
+            </span>
+            <span className="text-[10px] font-bold text-accent uppercase">{plan}</span>
           </div>
           <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
             <div 
-              className="h-full bg-accent transition-all duration-500" 
-              style={{ width: `${(usageCount / 3) * 100}%` }}
+              className={cn("h-full transition-all duration-500", isAdmin ? "bg-accent w-full" : "bg-accent")} 
+              style={!isAdmin ? { width: `${(usageCount / 3) * 100}%` } : undefined}
             />
           </div>
         </div>
@@ -81,7 +83,7 @@ export function Sidebar({ userPlan = "free", usageCount = 0 }: { userPlan?: stri
           </Avatar>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-foreground truncate">{session?.user?.name}</p>
-            <p className="text-[11px] text-secondary-foreground uppercase font-bold tracking-tight">{userPlan} Plan</p>
+            <p className="text-[11px] text-secondary-foreground uppercase font-bold tracking-tight">{plan} Plan</p>
           </div>
         </div>
         <button
