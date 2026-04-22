@@ -1,6 +1,6 @@
-"use client";
-
-import { useSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { getSupabaseService } from "@/lib/supabase";
 import { 
   User, Mail, ShieldCheck, 
   Trash2, LogOut, Zap, Clock 
@@ -22,8 +22,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
 
-export default function SettingsPage() {
-  const { data: session } = useSession();
+async function getUsageCount(userId: string) {
+  const supabase = getSupabaseService();
+  const monthYear = new Date().toLocaleString("en-US", { month: "long", year: "numeric" });
+  const { data } = await supabase
+    .from("generations")
+    .select("count")
+    .eq("user_id", userId)
+    .eq("month_year", monthYear)
+    .single();
+  return data?.count || 0;
+}
+
+export default async function SettingsPage() {
+  const session = await getServerSession(authOptions) as any;
+  const usageCount = session?.user?.id ? await getUsageCount(session.user.id) : 0;
+  const isAdmin = session?.user?.role === "admin";
+  const plan = isAdmin ? "admin" : "free";
 
   return (
     <div className="flex-1 p-8 max-w-4xl">
@@ -75,21 +90,27 @@ export default function SettingsPage() {
           <div className="bg-white border border-border rounded-xl p-8 shadow-sm">
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h3 className="text-lg font-bold text-foreground mb-1">Free Plan</h3>
-                    <p className="text-sm text-secondary-foreground">You are currently on the free-forever plan.</p>
+                    <h3 className="text-lg font-bold text-foreground mb-1 capitalize">{plan} Plan</h3>
+                    <p className="text-sm text-secondary-foreground">
+                        {isAdmin ? "You have unlimited access as an admin." : "You are currently on the free-forever plan."}
+                    </p>
                 </div>
-                <Button className="bg-accent hover:bg-accent-hover text-white gap-2 font-bold px-6">
-                    <Zap className="w-4 h-4 fill-white" />
-                    Upgrade to Pro
-                </Button>
+                {!isAdmin && (
+                  <Button className="bg-accent hover:bg-accent-hover text-white gap-2 font-bold px-6">
+                      <Zap className="w-4 h-4 fill-white" />
+                      Upgrade to Pro
+                  </Button>
+                )}
             </div>
 
             <div className="space-y-4 pt-6 border-t border-border">
                 <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-foreground">Monthly Generations</span>
-                    <span className="text-xs font-bold text-secondary-foreground">2 of 3 used</span>
+                    <span className="text-xs font-bold text-secondary-foreground">
+                        {isAdmin ? "Unlimited access" : `${usageCount} of 3 used`}
+                    </span>
                 </div>
-                <Progress value={(2/3)*100} className="h-2 bg-border overflow-hidden" />
+                <Progress value={isAdmin ? 100 : (usageCount/3)*100} className="h-2 bg-border overflow-hidden [&>div]:bg-accent" />
                 <p className="text-[12px] text-secondary-foreground flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
                     Limits will reset on May 1st, 2024.
