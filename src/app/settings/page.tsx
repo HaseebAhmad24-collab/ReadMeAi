@@ -9,18 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
+import { DeleteAccountButton } from "@/components/settings/DeleteAccountButton";
 
 async function getUsageCount(userId: string) {
   const supabase = getSupabaseService();
@@ -136,26 +126,7 @@ export default async function SettingsPage() {
                    </p>
                 </div>
                 
-                <AlertDialog>
-                    <AlertDialogTrigger className={cn(buttonVariants({ variant: "destructive" }), "bg-error hover:bg-error/90 shrink-0 font-bold px-6 cursor-pointer")}>
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete Account
-                    </AlertDialogTrigger>
-                    <AlertDialogContent className="rounded-2xl border-border">
-                        <AlertDialogHeader>
-                            <AlertDialogTitle className="text-xl font-bold">Are you absolutely sure?</AlertDialogTitle>
-                            <AlertDialogDescription className="text-secondary-foreground">
-                                This will permanently delete your ReadMeAI account and all associated data. You will need to re-authenticate with GitHub to use the service again.
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter className="gap-3">
-                            <AlertDialogCancel className="rounded-xl border-border-strong font-bold">Cancel</AlertDialogCancel>
-                            <AlertDialogAction className="bg-error hover:bg-error/90 text-white rounded-xl font-bold">
-                                Yes, Delete My Account
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
+                <DeleteAccountButton />
             </div>
           </div>
         </section>
