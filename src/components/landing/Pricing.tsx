@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
+import { toast } from "sonner";
 
 const plans = [
   {
@@ -94,7 +95,13 @@ export function Pricing() {
               </div>
 
               <Button
-                onClick={() => signIn("github")}
+                onClick={() =>
+                  plan.popular
+                    ? toast("Pro features are currently in testing! 🚀", {
+                        description: "We'll notify you as soon as Pro plans are live. Stay tuned!",
+                      })
+                    : signIn("github")
+                }
                 className={`w-full h-11 rounded-xl font-medium transition-all ${
                   plan.popular
                     ? "bg-accent hover:bg-accent-hover text-white"
