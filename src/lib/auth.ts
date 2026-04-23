@@ -69,10 +69,9 @@ export const authOptions: NextAuthOptions = {
           if (!error && data) {
             token.userId = data.id;
             token.role = data.role;
-            console.log("NextAuth: On SignIn, fetched role:", data.role);
           }
         } catch (e) {
-          console.error("JWT Session Supabase error:", e);
+          // silently fail — self-healing will recover
         }
       }
 
@@ -81,27 +80,20 @@ export const authOptions: NextAuthOptions = {
         try {
           const supabase = getSupabaseService();
           const { data } = await supabase.from("users").select("role").eq("id", token.userId).single();
-          if (data) {
-            token.role = data.role;
-            console.log("NextAuth: Self-healed role using userId:", data.role);
-          }
-        } catch (e) {
-             console.error("Self heal error:", e);
-        }
+          if (data) token.role = data.role;
+        } catch (e) {}
       } else if (!token.userId && !token.role && token.sub) {
-        // Super self-healing: use token.sub (github id)
         try {
           const supabase = getSupabaseService();
           const { data } = await supabase.from("users").select("id, role").eq("github_id", token.sub).single();
           if (data) {
             token.userId = data.id;
             token.role = data.role;
-            console.log("NextAuth: Super-healed role using token.sub:", data.role);
           }
         } catch(e) {}
       }
 
-      console.log("NextAuth: Final token state:", { role: token.role, userId: token.userId, sub: token.sub });
+
       return token;
     },
     async session({ session, token }: any) {
@@ -109,7 +101,7 @@ export const authOptions: NextAuthOptions = {
       session.user.id = token.userId;
       session.user.username = token.username;
       session.user.role = token.role || "user"; // ensure fallback
-      console.log("NextAuth: Active session role:", session.user.role);
+
       return session;
     },
   },
