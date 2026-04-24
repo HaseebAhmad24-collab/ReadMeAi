@@ -92,6 +92,12 @@ ReadMeAI is a professional SaaS platform that automates GitHub README generation
 - Configured with `theme="light"` and `richColors` for clear font visibility.
 - Used in: generation limit errors, upgrade prompts, account deletion feedback.
 
+### 11. Production Deployment (Vercel)
+- **Live URL**: `https://read-me-ai-coral.vercel.app`
+- **Environment Variables**: Fully configured in Vercel Dashboard (GitHub OAuth, Gemini, Supabase).
+- **GitHub OAuth Sync**: Redirect URIs updated to production domain in GitHub Developer settings.
+- **Production Readiness**: All `console.log` statements in `src/lib/auth.ts` removed to ensure clean logs and avoid Next.js dev overlay issues.
+
 ---
 
 ## ⚡ Critical Technical Nuances (MUST READ)
@@ -132,7 +138,7 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 NEXTAUTH_SECRET=
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=https://read-me-ai-coral.vercel.app
 ```
 
 ---
@@ -172,8 +178,7 @@ NEXTAUTH_URL=http://localhost:3000
 2. **Abuse Prevention (Email Tracking)**: When Stripe is added, track limits by GitHub email (not just user ID) to prevent account-delete-and-recreate abuse.
 3. **README Templates**: Let users pick styles (Minimal, Detailed, Badge-heavy, etc.).
 4. **Private Repo Support**: Currently only public repos are scanned.
-5. **Production Deployment**: Deploy to Vercel, configure custom domain, set env vars in Vercel dashboard.
-6. **Multi-language README**: i18n support for generated content.
+5. **Multi-language README**: i18n support for generated content.
 
 ---
 

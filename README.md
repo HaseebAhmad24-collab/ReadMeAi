@@ -20,7 +20,7 @@
 
 <br/>
 
-[**Live Demo**](https://readme-ai.vercel.app) · [**Report Bug**](https://github.com/HaseebAhmad24-collab/ReadMeAi/issues) · [**Request Feature**](https://github.com/HaseebAhmad24-collab/ReadMeAi/issues)
+[**Live Demo**](https://read-me-ai-coral.vercel.app) · [**Report Bug**](https://github.com/HaseebAhmad24-collab/ReadMeAi/issues) · [**Request Feature**](https://github.com/HaseebAhmad24-collab/ReadMeAi/issues)
 
 </div>
 
